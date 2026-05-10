@@ -105,7 +105,7 @@ class SafeImportHook:
 
 			for danger in DANGEROUS_PATHS:
 				if danger in path_str:
-					self.detected.append(f"read {path_str}")
+					self.detected_in_chain.append(f"read {path_str}")
 					break
 			return original_open(path, *args, **kwargs)
 
