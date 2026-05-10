@@ -1,7 +1,7 @@
 import sys
 import os
-from pathlib import Path
 import importlib.util
+from pathlib import Path
 
 DANGEROUS_ENV_VARS = {
 	'AWS_SECRET_ACCESS_KEY', 'AWS_ACCESS_KEY_ID',
@@ -26,6 +26,23 @@ class SafeImportHook:
 		self.depth = 0
 		self.top_level_module = None
 		self.detected_in_chain = []
+
+	def audit_hook(self, event, args):
+		"""
+		Нативный перехват системных вызовов ОС (PEP 578).
+		Ловит скрытую активность, даже если манки-патчинг удалось обойти.
+		Срабатывает только во время инициализации стороннего модуля.
+		"""
+		if not self.top_level_module:
+			return
+
+		# Перехват запуска подозрительных процессов (Reverse shell, вызов bash/curl и т.д.)
+		if event in ("os.system", "subprocess.Popen"):
+			self.detected_in_chain.append(f"process execution ({args[0]})")
+
+		# Перехват исходящих сетевых соединений (кража ключей, скачивание malware)
+		elif event == "socket.connect":
+			self.detected_in_chain.append(f"network connection ({args[0]})")
 
 	def find_spec(self, fullname, path=None, target=None):
 		if fullname.startswith('_') or fullname in sys.builtin_module_names:
@@ -58,7 +75,8 @@ class SafeImportHook:
 				return None
 
 			origin = spec.origin
-			is_stdlib = ('/lib/python' in origin or '/Framework/Python' in origin) and 'site-packages' not in origin
+			is_stdlib = (
+						            '/lib/python' in origin or '/Framework/Python' in origin or 'lib\\python' in origin.lower()) and 'site-packages' not in origin
 
 			# Только third-party пакеты на уровне 1 (прямой импорт)
 			if self.depth == 1 and not is_stdlib:
@@ -88,24 +106,21 @@ class SafeImportHook:
 
 		def safe_environ_get(key, *args, **kwargs):
 			if key in DANGEROUS_ENV_VARS and self.top_level_module:
-				self.detected_in_chain.append(f"read {key}")
+				self.detected_in_chain.append(f"read env {key}")
 			return original_environ_get(key, *args, **kwargs)
 
 		def safe_environ_getitem(key):
 			if key in DANGEROUS_ENV_VARS and self.top_level_module:
-				self.detected_in_chain.append(f"read {key}")
+				self.detected_in_chain.append(f"read env {key}")
 			return original_environ_getitem(key)
 
 		def safe_open(path, *args, **kwargs):
-			if isinstance(path, str):
-				path_str = path
-			else:
-				path_str = str(path)
+			path_str = str(path) if not isinstance(path, str) else path
 			path_str = os.path.expanduser(path_str)
 
 			for danger in DANGEROUS_PATHS:
 				if danger in path_str:
-					self.detected_in_chain.append(f"read {path_str}")
+					self.detected_in_chain.append(f"read file {path_str}")
 					break
 			return original_open(path, *args, **kwargs)
 
@@ -128,6 +143,10 @@ def install():
 	hook = SafeImportHook()
 	if not any(isinstance(h, SafeImportHook) for h in sys.meta_path):
 		sys.meta_path.insert(0, hook)
+
+		# Активируем хук безопасности на уровне ОС
+		sys.addaudithook(hook.audit_hook)
+
 		print("✅ Supply Chain Guard installed")
 
 
