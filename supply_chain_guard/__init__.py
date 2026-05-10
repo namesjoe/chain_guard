@@ -30,19 +30,24 @@ class SafeImportHook:
 	def audit_hook(self, event, args):
 		"""
 		Нативный перехват системных вызовов ОС (PEP 578).
-		Ловит скрытую активность, даже если манки-патчинг удалось обойти.
 		Срабатывает только во время инициализации стороннего модуля.
 		"""
 		if not self.top_level_module:
 			return
 
-		# Перехват запуска подозрительных процессов (Reverse shell, вызов bash/curl и т.д.)
+		# Перехват запуска подозрительных процессов
 		if event in ("os.system", "subprocess.Popen"):
-			self.detected_in_chain.append(f"process execution ({args[0]})")
+			command = args[0]
+			self.detected_in_chain.append(f"process execution ({command})")
+			# БЛОКИРУЕМ выполнение на уровне интерпретатора!
+			raise PermissionError(f"ChainGuard: OS command execution blocked: {command}")
 
-		# Перехват исходящих сетевых соединений (кража ключей, скачивание malware)
+		# Перехват исходящих сетевых соединений
 		elif event == "socket.connect":
-			self.detected_in_chain.append(f"network connection ({args[0]})")
+			address = args[1] if len(args) > 1 else args[0]
+			self.detected_in_chain.append(f"network connection to {address}")
+			# БЛОКИРУЕМ выполнение сети!
+			raise PermissionError(f"ChainGuard: Network connection blocked to {address}")
 
 	def find_spec(self, fullname, path=None, target=None):
 		if fullname.startswith('_') or fullname in sys.builtin_module_names:
