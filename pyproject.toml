@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "supply-chain-guard"
+version = "0.2.0"
+authors =[
+  {name="namesjoe", email="sedovda@yahoo.com"},
+]
+description = "A lightweight OS-level supply chain attack guard for Python"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers =[
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Security",
+]
+dependencies = []
+
+[tool.setuptools.data-files]
+# Это положит .pth файл в корень site-packages
+"." = ["supply_chain_guard.pth"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["supply_chain_guard*"]
+exclude = ["test_packages*", "tests*"]
+
+[project.urls]
+"Homepage" = "https://github.com/namesjoe/chain_guard"
+"Bug Tracker" = "https://github.com/namesjoe/chain_guard/issues"
