@@ -1,5 +1,7 @@
-# supply_chain_guard https://pypi.org/project/supply-chain-guard/
-
+# PYPI: https://pypi.org/project/supply-chain-guard/
+[![PyPI Downloads](https://static.pepy.tech/personalized-badge/supply-chain-guard?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/supply-chain-guard)
+###### IEEE Publication: https://doi.org/10.1109/TELE71748.2026.11591271
+###### Python: 3.8+
 ## 🛡 Features
 
 - **Import Interception:** Blocks unauthorized access to sensitive environment variables (e.g., `AWS_SECRET_ACCESS_KEY`, `DATABASE_URL`) during package initialization.
@@ -75,4 +77,4 @@ If you manage a Jupyter server for students or a team, you can enforce security 
 
 > pip install -e test_package/malware_pkg
 
-> pip install -e test_package/sheep_package #имеет зависимость от 'вредоносного' wolf_package
+> pip install -e test_package/sheep_package #which has dependency from 'malicious' wolf_package
