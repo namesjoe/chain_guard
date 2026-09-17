@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "supply-chain-guard"
-version = "0.2.0"
+version = "0.2.1"
 authors =[
-  {name="namesjoe", email="sedovda@yahoo.com"},
+  {name="Sedov Dmitrii", email="sedovda@yahoo.com"},
 ]
 description = "A lightweight OS-level supply chain attack guard for Python"
 readme = "README.md"
@@ -20,7 +20,6 @@ classifiers =[
 dependencies = []
 
 [tool.setuptools.data-files]
-# Это положит .pth файл в корень site-packages
 "." = ["supply_chain_guard.pth"]
 
 [tool.setuptools.packages.find]
