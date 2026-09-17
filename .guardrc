@@ -3,10 +3,29 @@
   "blocked_env_vars": [
     "INTERNAL_CORP_TOKEN",
     "ENTERPRISE_API_SECRET",
-    "CUSTOM_DB_PASS"
+    "CUSTOM_DB_PASS",
+    'AWS_SECRET_ACCESS_KEY',
+    'AWS_ACCESS_KEY_ID',
+	'GITHUB_TOKEN',
+	'GITHUB_PAT',
+	'OPENAI_API_KEY',
+	'STRIPE_API_KEY',
+	'DATABASE_PASSWORD',
+	'DATABASE_URL',
+	'PRIVATE_KEY',
+	'SECRET_KEY',
+	'ENCRYPTION_KEY',
+	'JWT_SECRET'
   ],
   "blocked_paths": [
     "/etc/internal_certs",
-    "/.vault-tokens"
+    "/.vault-tokens",
+    '/.ssh',
+    '/.aws',
+    '/.config/gcloud',
+	'/.github',
+	'/.kube',
+	'/root/.ssh',
+	'/root/.aws'
   ]
 }

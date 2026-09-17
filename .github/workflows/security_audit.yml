@@ -1,0 +1,21 @@
+name: Automated Security Tests
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.9'}
+      - name: Run automated package verification
+        run: |
+          export PYTHONPATH="$PYTHONPATH:$(pwd)/test_packages"
+          chmod +x supply_chain_guard/setup_protection.sh && ./supply_chain_guard/setup_protection.sh
+          pip install test_packages/clean_pkg
+          pip install test_packages/malware_pkg
+          pip install test_packages/sheep_pkg
+          ! python -c "import clean_pkg"
+          ! python -c "import malware_pkg"
+          ! python -c "import sheep_pkg"
+
