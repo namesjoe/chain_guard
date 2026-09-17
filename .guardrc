@@ -1,0 +1,12 @@
+{
+  "version": "1.0",
+  "blocked_env_vars": [
+    "INTERNAL_CORP_TOKEN",
+    "ENTERPRISE_API_SECRET",
+    "CUSTOM_DB_PASS"
+  ],
+  "blocked_paths": [
+    "/etc/internal_certs",
+    "/.vault-tokens"
+  ]
+}
