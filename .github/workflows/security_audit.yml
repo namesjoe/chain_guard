@@ -12,9 +12,10 @@ jobs:
         run: |
           export PYTHONPATH="$PYTHONPATH:$(pwd)/test_packages"
           chmod +x supply_chain_guard/setup_protection.sh && ./supply_chain_guard/setup_protection.sh
-          pip install -e test_packages/clean_pkg
-          pip install -e test_packages/malware_pkg
-          pip install -e test_packages/sheep_pkg
+          pip install test_packages/clean_pkg
+          pip install test_packages/malware_pkg
+          pip install test_packages/sheep_pkg
+          ! python -c "import clean_pkg"
           ! python -c "import malware_pkg"
           ! python -c "import sheep_pkg"
 
