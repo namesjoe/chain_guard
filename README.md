@@ -71,7 +71,7 @@ If you manage a Jupyter server for students or a team, you can enforce security 
 
 > pip install -e .
 
-установка тестовых пакетов
+Test packages isntallation
 
 > pip install -e test_package/clean_pkg
 
