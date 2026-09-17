@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "supply-chain-guard"
-version = "0.2.1"
+version = "0.3.0"
 authors =[
   {name="Sedov Dmitrii", email="sedovda@yahoo.com"},
 ]
@@ -12,7 +12,7 @@ description = "A lightweight OS-level supply chain attack guard for Python"
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers =[
-    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Topic :: Security",

@@ -1,5 +1,6 @@
 import sys
 import os
+import json
 import importlib.util
 from pathlib import Path
 
@@ -20,6 +21,26 @@ DANGEROUS_PATHS = {
 	'/root/.ssh', '/root/.aws',
 }
 
+def _load_enterprise_config():
+    """Loads custom rules from .guardrc or guard_config.json if present."""
+    env_path = os.environ.get("GUARD_CONFIG_PATH")
+    config_path = Path(env_path) if env_path else Path.cwd() / ".guardrc"
+
+    if not config_path.is_file():
+        return
+
+    try:
+        with open(config_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            if "blocked_env_vars" in data and isinstance(data["blocked_env_vars"], list):
+                DANGEROUS_ENV_VARS.update(data["blocked_env_vars"])
+            if "blocked_paths" in data and isinstance(data["blocked_paths"], list):
+                DANGEROUS_PATHS.update(data["blocked_paths"])
+        print(f"🔒 [Supply-Chain-Guard] Loaded enterprise rules from {config_path.name}")
+    except Exception:
+        pass
+
+_load_enterprise_config()
 
 class SafeLoader:
 	"""Обертка над стандартным загрузчиком модулей (PEP 451)"""
