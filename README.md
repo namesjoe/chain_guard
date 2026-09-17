@@ -9,19 +9,6 @@
 - **File System Guard:** Prevents third-party packages from reading sensitive files like `~/.ssh/id_rsa` or `~/.aws/credentials`.
 - **OS-level Telemetry & Execution Prevention:** Uses Python's native Audit Hooks (PEP 578) to actively block remote code execution (`os.system`, `subprocess`) and reverse shell network connections (`socket.connect`) at the moment a suspicious package is imported.
 
-## Architecture & Detection Pipeline
-
-```mermaid
-graph TD
-    A[Python Package Execution / Import] --> B[sys.addaudithook Runtime Interceptor]
-    B --> C{Behavioral Engine}
-    C -->|Telemetry: Network / Syscalls| D[OS-Level Telemetry Monitor]
-    C -->|Policy Check: Blacklisted Tokens| E[Enterprise Rule Engine (.guardrc)]
-    D --> F{Threat Detected?}
-    E --> F
-    F -->|Yes| G[Runtime Execution Terminated + Alert Raised]
-    F -->|No| H[Safe Package Execution]
-```
 
 ## 🚀 Installation
 
@@ -101,6 +88,8 @@ If you manage a Jupyter server for students or a team, you can enforce security 
 
 ### < Installation by hand >
 <details>
+<summary>Show</summary>
+
 > python3 -m venv venv
 
 > source venv/bin/activate
@@ -115,6 +104,32 @@ Test packages isntallation
 
 > pip install -e test_package/sheep_package #which has dependency from 'malicious' wolf_package
 </details>
+
+## Architecture & Detection Pipeline
+<details>
+<summary>View Schema Image</summary>
+
+![Architecture](docs/images/architecture.jpg)
+</details>
+
+<details>
+
+<summary>View Mermaid Source</summary>
+
+```mermaid
+graph TD
+    A[Python Package Execution / Import] --> B[sys.addaudithook Runtime Interceptor]
+    B --> C{Behavioral Engine}
+    C -->|Telemetry: Network / Syscalls| D[OS-Level Telemetry Monitor]
+    C -->|Policy Check: Blacklisted Tokens| E[Enterprise Rule Engine (.guardrc)]
+    D --> F{Threat Detected?}
+    E --> F
+    F -->|Yes| G[Runtime Execution Terminated + Alert Raised]
+    F -->|No| H[Safe Package Execution]
+```
+
+</details>
+
 
 ## Overview & Strategic Importance
 **Supply-Chain-Guard** is an automated, container-ready dynamic analysis framework designed to detect and intercept malicious code execution in Python third-party dependencies during runtime and installation.
